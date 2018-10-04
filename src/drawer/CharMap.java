@@ -2,18 +2,18 @@ package drawer;
 
 public class CharMap {
 	
-	public static char[][] map;
-	private static int height;
-	private static int width;
+	private char[][] map;
+	private int height;
+	private int width;
 	
 	public void init(int w, int h) {
-		CharMap.height=h+1;
-		CharMap.width=w+1;
-		CharMap.map=new char[height][width];
+		this.height=h+1;
+		this.width=w+1;
+		this.map=new char[height][width];
 	}
 	
-	public void put(int x, int y, char ch) {
-		map[x][y]=ch;
+	public void put(int i, int j, char ch) {
+		map[i][j]=ch;
 	}
 
 	public char get(int i, int j) {
