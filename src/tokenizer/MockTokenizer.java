@@ -3,7 +3,7 @@ package tokenizer;
 public class MockTokenizer {
 	
 	private int index=0;
-	//7*8|2*3-7*5|5*4
+	//7*8|2*3-7*5|5*4|1*1|1*1|1*1
 	private Token[] tokens={
 			new Token("7", Type.NUMBER), 
 			new Token("*", Type.SYMBOL),
