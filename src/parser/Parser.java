@@ -1,4 +1,5 @@
 package parser;
+import java.io.IOException;
 import java.io.Reader;
 
 import exceptions.ParsingException;
@@ -13,15 +14,14 @@ import tokenizer.Type;
 
 public class Parser {
 	
-	private final Tokenizer tokenizer;//=new MockTokenizer();
+	private final Tokenizer tokenizer;
 	private Token token;
 
 	public Parser(Reader reader) {
-		//Per il futuro
 		tokenizer=new Tokenizer(reader);
 	}
 	
-	public Block parse() throws ParsingException{
+	public Block parse() throws ParsingException, IOException{
 		token=tokenizer.next();
 		Block block=vertExpr();
 		if(tokenizer.peek().getType()==(Type.EOS)) {
@@ -30,7 +30,7 @@ public class Parser {
 		throw new ParsingException("The parser did not find an end of string (EOS failed)");
 	}
 
-	private Block vertExpr() throws ParsingException {
+	private Block vertExpr() throws ParsingException, IOException {
 		Block block=horizExpr();
 		while(isSymbol("|")) {
 			token=tokenizer.next();
@@ -39,7 +39,7 @@ public class Parser {
 		return block;
 	}
 
-	private Block horizExpr() throws ParsingException {
+	private Block horizExpr() throws ParsingException, IOException {
 		Block block=primaryExpr();
 		while(isSymbol("-")) {
 			token=tokenizer.next();
@@ -48,7 +48,7 @@ public class Parser {
 		return block;
 	}
 
-	private Block primaryExpr() throws ParsingException {
+	private Block primaryExpr() throws ParsingException, IOException {
 		if(check(Type.NUMBER)) {
 			return rectExpr();
 		}
@@ -68,7 +68,7 @@ public class Parser {
 		}
 	}
 
-	private Rect rectExpr() throws ParsingException {
+	private Rect rectExpr() throws ParsingException, IOException {
 		if(check(Type.NUMBER)) {
 			if(!tokenizer.next().getValue().equals("*")) {
 				throw new ParsingException("No valid operation after number");
@@ -83,11 +83,19 @@ public class Parser {
 		}
 	}
 	
-	private boolean check(Type type) {
-		return (token.getType()==type)?true:false;
+	private boolean check(Type type) throws ParsingException {
+		if(token.getType()==type) {
+			return true;
+		}
+		if(token.getType()==Type.UNKNOWN) {
+			throw new ParsingException("An uknown character was found");
+		}
+		else {
+			return false;
+		}
 	}
 	
-	private boolean isSymbol(String symbol) {
+	private boolean isSymbol(String symbol) throws IOException {
 		if(tokenizer.peek().getValue().equals(symbol)) {
 			tokenizer.next();
 			return true;

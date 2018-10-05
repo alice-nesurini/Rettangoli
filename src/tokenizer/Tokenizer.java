@@ -7,19 +7,16 @@ public class Tokenizer {
 	
 	private Reader reader;
 	private char ch;
-	private int chInt;
 	private StringBuilder builder=new StringBuilder();
 	
 	public Tokenizer(Reader reader) {
 		this.reader=reader;
 	}
 
-	public Token next() {
+	public Token next() throws IOException {
 		skipSpaces();
-		try {
-			chInt=reader.read();
-			ch=(char)chInt;
-		} catch (IOException e) {e.printStackTrace();}
+		int chInt=reader.read();
+		ch=(char)chInt;
 
 		if(ch=='*') {
 			return new Token("*", Type.SYMBOL);
@@ -48,68 +45,33 @@ public class Tokenizer {
 		return new Token("", Type.UNKNOWN);
 	}
 	
-	private void skipSpaces() {
-		try {
-			reader.mark(1);
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		try {
-			ch = (char)reader.read();
-		} catch (IOException ex) {
-			ex.printStackTrace();
-		}
+	private void skipSpaces() throws IOException {
+		reader.mark(1);
+		ch = (char)reader.read();
 		if(Character.isWhitespace(ch)) {
 			skipSpaces();
 		}
-		else {
-			try {
-				reader.reset();
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-		}
+		reader.reset();
 	}
 
-	private String buildNumber() {
-		try {
-			reader.mark(1);
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		
-		try {
-			ch=(char)reader.read();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+	private String buildNumber() throws IOException {
+		reader.mark(1);
+		ch=(char)reader.read();
 		
 		if(Character.isDigit(ch)) {
 			builder.append(ch);
 			buildNumber();
 		}
 		else {
-			try {
-				reader.reset();
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
+			reader.reset();
 		}
 		return builder.toString();
 	}
 
-	public Token peek() {
-		try {
-			reader.mark(1);
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+	public Token peek() throws IOException {
+		reader.mark(1);
 		Token token=next();
-		try {
-			reader.reset();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+		reader.reset();
 		return token;
 	}
 }
