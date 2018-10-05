@@ -8,17 +8,17 @@ import structure.Rect;
 import structure.VerticalBlock;
 import tokenizer.MockTokenizer;
 import tokenizer.Token;
+import tokenizer.Tokenizer;
 import tokenizer.Type;
 
 public class Parser {
 	
-	private final MockTokenizer tokenizer=new MockTokenizer();
+	private final Tokenizer tokenizer;//=new MockTokenizer();
 	private Token token;
 
 	public Parser(Reader reader) {
 		//Per il futuro
-		//tokenizer=new Tokenizer(reader);
-		//token=tokenizer.next();
+		tokenizer=new Tokenizer(reader);
 	}
 	
 	public Block parse() throws ParsingException{
@@ -49,12 +49,30 @@ public class Parser {
 	}
 
 	private Block primaryExpr() throws ParsingException {
-		return (check(Type.NUMBER))?rectExpr():vertExpr();
+		if(check(Type.NUMBER)) {
+			return rectExpr();
+		}
+		else{
+			Block block;
+			if(token.getValue().equals("(")) {
+				token=tokenizer.next();
+				block=vertExpr();
+			}else {
+				throw new ParsingException("Invalid symbol, no start pharentesis");
+			}
+			if(tokenizer.next().getValue().equals(")")) {
+				return block;
+			}else {
+				throw new ParsingException("Invalid symbol, no end pharentesis");
+			}
+		}
 	}
 
-	private Block rectExpr() throws ParsingException {
+	private Rect rectExpr() throws ParsingException {
 		if(check(Type.NUMBER)) {
-			tokenizer.next();
+			if(!tokenizer.next().getValue().equals("*")) {
+				throw new ParsingException("No valid operation after number");
+			}
 			return new Rect(
 				Integer.parseInt(token.getValue()),
 				Integer.parseInt(tokenizer.next().getValue())

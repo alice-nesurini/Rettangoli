@@ -1,21 +1,17 @@
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.io.StringReader;
 
 import drawer.CharMap;
 import exceptions.ParsingException;
 import parser.Parser;
 import structure.Block;
-import structure.HorizontalBlock;
-import structure.Rect;
-import structure.VerticalBlock;
 
 public class Test {
 
 	public static void main(String[] args) throws IOException {
 		Block b=null;
 		try {
-			b=new Parser(new StringReader("7*8|2*3-7*5|5*4")).parse();
+			b=new Parser(new StringReader(" (12  * 8 ) | 21 *10|(1 * 1 - 7 * 5)|5*4")).parse();
 			
 			System.out.println(b.width()+" "+b.height());
 			
